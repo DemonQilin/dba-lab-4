@@ -1,6 +1,9 @@
-# Informe — Laboratorio 5: Usuarios, privilegios y roles
+# Informe — Workshop #4: Usuarios, privilegios y roles
 
-**Administración de Bases de Datos · ITM** · Taller #4, caso 14 "La Sabana" · **Script:** `workshop4_la_sabana.sql`, se ejecuta con `sqlplus /nolog @workshop4_la_sabana.sql` y pide la contraseña de SYSTEM · **Entorno:** Oracle 23ai Free y SQL*Plus 23. El mismo script corre sin cambios en 21c XE y 18c XE (la familia de 19c).
+**Curso:** Administración de Bases de Datos, ITM\
+**Actividad:** Workshop #4, caso 14 "La Sabana"\
+**Script:** `workshop4_la_sabana.sql`, se ejecuta con `sqlplus /nolog @workshop4_la_sabana.sql` y pide la contraseña de SYSTEM\
+**Entorno:** Oracle 23ai Free y SQL*Plus 23. El mismo script corre sin cambios en 21c XE y 18c XE (la familia de 19c).
 
 Los extractos son salida literal de SQL*Plus de una ejecución completa del script, que terminó con código 0. Las únicas líneas omitidas son las `Help: https://docs.oracle.com/error-help/...` que 23ai agrega a cada error.
 

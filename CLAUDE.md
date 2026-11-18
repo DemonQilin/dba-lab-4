@@ -62,6 +62,13 @@ printf '%s\n' "$PW" | docker compose -f $F exec -T app bash -c 'sqlplus -L /nolo
 - A user holding a role `WITH ADMIN OPTION` can revoke it from anyone, even its creator (admin_teusaquillo ran `REVOKE rol_admin_local FROM admin_sabanero`, tested on 23ai).
 - Mismatched options: `WITH ADMIN OPTION` on an object privilege -> ORA-00993 `missing GRANT keyword`; `WITH GRANT OPTION` on a system privilege -> ORA-01939, whose text differs by version (18c/21c: `only the ADMIN OPTION can be specified`; 23ai: `invalid option specified for WITH clause in the GRANT statement`); `WITH GRANT OPTION` to a role -> ORA-01926.
 
+## Report (lab 5)
+
+- Source of truth: `docs/informe-lab5.md` (Spanish). Deliverable: `docs/informe-lab5.odt`, transcribed from the md, using the lab 4 Word report (`docs/Informe_Diagnostico_Laboratio_Bloque_4.docx`) as the template.
+- Fonts: Noto Sans for text, Noto Sans Mono for code, embedded in the ODT. The Word template's Aptos font is not installed, and LibreOffice imports it as a serif font; never reintroduce Aptos, Calibri or Consolas.
+- Code styles (dark terminal look): paragraph `Codigo` for SQL*Plus blocks (one paragraph per block, line breaks inside); character styles `Codigo en linea` (inline code), `Terminal comando` (`SQL>` and continuation lines), `Terminal error` (`ERROR at line` and `ORA-` lines).
+- Edit the ODT with scripts (unzip, modify XML, rezip with `mimetype` stored first), then round-trip it through `soffice --headless --convert-to odt` so fonts stay embedded; check the result by exporting to PDF.
+
 ## Working conventions
 
 - Verify against the database or Oracle docs before stating behavior; never fabricate output.
