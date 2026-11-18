@@ -29,6 +29,15 @@ PW=$(grep '^ORACLE_PASSWORD=' .devcontainer/.env | cut -d= -f2-)
 docker compose -f $F exec -T -e PW="$PW" app bash -c 'sqlplus -s -L "system/$PW@$ORACLE_CONN" @/workspace/<script>.sql'
 ```
 
+- The solution script `workshop4_la_sabana.sql` connects by itself and reads the SYSTEM password with `ACCEPT`, so run it with `/nolog` and feed the password on stdin:
+
+```bash
+printf '%s\n' "$PW" | docker compose -f $F exec -T app bash -c 'sqlplus -L /nolog @/workspace/workshop4_la_sabana.sql'
+```
+
+- On 21c/18c, copy a modified version into the container instead of editing the script: `sed 's#/FREEPDB1#/XEPDB1#' workshop4_la_sabana.sql | docker compose -f $F exec -T app bash -c 'cat > /tmp/xe.sql'`, then run `@/tmp/xe.sql` the same way.
+- Expected result on every version: exit 0, exactly 5 `ORA-` lines (3x ORA-01031, ORA-00993, ORA-01939), identical output on a second run.
+
 - `.devcontainer/.env` is gitignored; never print or commit passwords. `down -v` destroys the active version's data: ask first.
 - VS Code extension `oracle.sql-developer` is for the step-by-step presentation only; the script is validated with SQL*Plus.
 
@@ -49,6 +58,9 @@ docker compose -f $F exec -T -e PW="$PW" app bash -c 'sqlplus -s -L "system/$PW@
 - `CREATE SESSION` is not part of `rol_admin_local`: grant it directly. A user holding the role `WITH ADMIN OPTION` can grant the role, not privileges outside it (teammate saw ORA-01031 granting CREATE SESSION as admin_teusaquillo).
 - `admin_sabanero` needs `CREATE ROLE`, `CREATE USER` and the system privileges it grants to the role `WITH ADMIN OPTION` (or `GRANT ANY PRIVILEGE`).
 - Users that create tables with rows need a tablespace quota (`QUOTA ... ON users`).
+- Revoking a role does not cascade, even if it was granted `WITH ADMIN OPTION` (task 16: admin_usaquen keeps rol_auditor). Revoking an object privilege granted `WITH GRANT OPTION` does cascade to whoever received it through the grantee (task 17).
+- A user holding a role `WITH ADMIN OPTION` can revoke it from anyone, even its creator (admin_teusaquillo ran `REVOKE rol_admin_local FROM admin_sabanero`, tested on 23ai).
+- Mismatched options: `WITH ADMIN OPTION` on an object privilege -> ORA-00993 `missing GRANT keyword`; `WITH GRANT OPTION` on a system privilege -> ORA-01939, whose text differs by version (18c/21c: `only the ADMIN OPTION can be specified`; 23ai: `invalid option specified for WITH clause in the GRANT statement`); `WITH GRANT OPTION` to a role -> ORA-01926.
 
 ## Working conventions
 
