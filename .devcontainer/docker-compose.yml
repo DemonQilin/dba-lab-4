@@ -1,23 +1,26 @@
-version: "3.8"
-
 name: lab4-admin-db
 
 services:
   app:
-    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
+    # Share the oracle network namespace: inside this container
+    # localhost:1521 is the database, the same address the host uses.
+    network_mode: service:oracle
+    environment:
+      ORACLE_CONN: localhost:1521/${ORACLE_SERVICE:-FREEPDB1}
     depends_on:
       oracle:
         condition: service_healthy
 
   oracle:
-    image: gvenzl/oracle-free:latest
+    image: ${ORACLE_IMAGE:-gvenzl/oracle-free:23.26.4-slim-faststart}
     environment:
       ORACLE_PASSWORD: ${ORACLE_PASSWORD}
-      APP_USER: ${APP_USER}
-      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
     ports:
       - "1521:1521"
     volumes:
@@ -26,8 +29,10 @@ services:
       test: ["CMD", "healthcheck.sh"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 30
       start_period: 30s
 
 volumes:
   oracle-data:
+    # One volume per Oracle version: datafiles cannot be shared across versions.
+    name: lab4-oracle-${ORACLE_VOLUME:-23}

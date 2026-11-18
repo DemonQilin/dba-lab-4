@@ -4,14 +4,6 @@
     "service": "app",
     "workspaceFolder": "/workspace",
     "shutdownAction": "stopCompose",
-    "forwardPorts": [
-        1521
-    ],
-    "portsAttributes": {
-        "1521": {
-            "label": "Oracle Database"
-        }
-    },
     "customizations": {
         "vscode": {
             "extensions": [
